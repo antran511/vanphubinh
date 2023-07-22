@@ -10,6 +10,7 @@
     "@refinedev/kbar": "^1.1.0",
     "@refinedev/react-router-v6": "^4.1.0",
     "@refinedev/simple-rest": "^4.0.0",
+    "@semi-bot/semi-theme-universedesign": "^1.0.12",
     "i18next": "^20.1.0",
     "i18next-browser-languagedetector": "^6.1.1",
     "i18next-xhr-backend": "^3.2.2",
@@ -17,6 +18,7 @@
     "react-dom": "^18.0.0",
     "react-i18next": "^11.8.11",
     "react-router-dom": "^6.8.1",
+    "vite-plugin-semi-theme": "^0.5.0",
     "vite-tsconfig-paths": "^4.2.0"
   },
   "devDependencies": {
