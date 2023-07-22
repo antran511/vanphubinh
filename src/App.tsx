@@ -1,4 +1,3 @@
-import "./App.css";
 import { authProvider } from "./authProvider";
 import { Refine, WelcomePage } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
