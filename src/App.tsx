@@ -1,6 +1,7 @@
-import { GitHubBanner, Refine, WelcomePage } from "@refinedev/core";
+import "./App.css";
+import { authProvider } from "./authProvider";
+import { Refine, WelcomePage } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
-
 import routerBindings, {
   DocumentTitleHandler,
   UnsavedChangesNotifier,
@@ -8,8 +9,6 @@ import routerBindings, {
 import dataProvider from "@refinedev/simple-rest";
 import { useTranslation } from "react-i18next";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import "./App.css";
-import { authProvider } from "./authProvider";
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -22,7 +21,6 @@ function App() {
 
   return (
     <BrowserRouter>
-      <GitHubBanner />
       <RefineKbarProvider>
         <Refine
           dataProvider={dataProvider("https://api.fake-rest.refine.dev")}

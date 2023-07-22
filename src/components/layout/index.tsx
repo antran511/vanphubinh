@@ -1,6 +1,6 @@
-import { PropsWithChildren } from "react";
 import { Breadcrumb } from "../breadcrumb";
 import { Menu } from "../menu";
+import { PropsWithChildren } from "react";
 
 export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   return (
