@@ -23,3 +23,18 @@ enum ItemType {
 }
 
 export default ItemType;
+
+export interface IPartner {
+  id: number;
+  partnerName: string;
+  partnerAddress: string;
+  partnerPhone: string;
+  partnerEmail: string;
+}
+
+export interface ISaleOrder {
+  id: number;
+  customerId: number;
+  discount: number;
+  customer: IPartner;
+}

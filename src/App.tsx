@@ -1,5 +1,6 @@
 import { MainLayout } from "@components/layout";
 import { ItemList } from "@pages/items";
+import { SaleOrderList } from "@pages/saleOrders";
 import { authProvider } from "@providers/authProvider";
 import { dataProvider } from "@providers/dataProvider";
 import { Refine } from "@refinedev/core";
@@ -43,6 +44,7 @@ function App() {
             >
               <Route index element={<ItemList />} />
               <Route path="items" element={<ItemList />} />
+              <Route path="sale-orders" element={<SaleOrderList />} />
             </Route>
           </Routes>
           <RefineKbar />

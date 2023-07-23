@@ -1,35 +1,31 @@
 import { Button, Table, Typography } from "@douyinfe/semi-ui";
 import { HttpError, useGo, useTable } from "@refinedev/core";
-import { IItem } from "@src/interfaces";
+import { IItem, ISaleOrder } from "@src/interfaces";
 import { useMemo } from "react";
 
-export const ItemList = () => {
+export const SaleOrderList = () => {
   const go = useGo();
   const { Title } = Typography;
   const columns = [
     {
-      title: "Tên mặt hàng",
-      dataIndex: "itemName",
+      title: "ID",
+      dataIndex: "Mã đơn hàng",
     },
     {
-      title: "Đơn vị tính",
-      dataIndex: "uom.uomName",
-    },
-    {
-      title: "Loại sản phẩm",
-      dataIndex: "itemType",
+      title: "Khách hàng",
+      dataIndex: "customer.partnerName",
     },
   ];
   const { tableQueryResult, current, setCurrent, pageSize } = useTable<
-    IItem,
+    ISaleOrder,
     HttpError
   >({
-    resource: "items",
+    resource: "sale-orders",
     pagination: {
       pageSize: 10,
     },
   });
-  const items = tableQueryResult?.data?.data;
+  const saleOrders = tableQueryResult?.data?.data;
   const total = tableQueryResult?.data?.meta?.total;
   const isLoading = tableQueryResult?.isLoading || tableQueryResult?.isFetching;
   const pagination = useMemo(
@@ -49,7 +45,7 @@ export const ItemList = () => {
           theme="solid"
           onClick={() => {
             go({
-              to: "/items/create",
+              to: "/sale-orders/create",
               type: "push",
             });
           }}
@@ -60,7 +56,7 @@ export const ItemList = () => {
       <div className="">
         <Table
           columns={columns}
-          dataSource={items}
+          dataSource={saleOrders}
           pagination={pagination}
           loading={isLoading}
         />
