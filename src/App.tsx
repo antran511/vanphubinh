@@ -1,12 +1,13 @@
-import { authProvider } from "./authProvider";
 import { MainLayout } from "@components/layout";
-import { Refine, WelcomePage } from "@refinedev/core";
+import { ItemList } from "@pages/items";
+import { authProvider } from "@providers/authProvider";
+import { dataProvider } from "@providers/dataProvider";
+import { Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import routerBindings, {
   DocumentTitleHandler,
   UnsavedChangesNotifier,
 } from "@refinedev/react-router-v6";
-import dataProvider from "@refinedev/simple-rest";
 import { useTranslation } from "react-i18next";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 
@@ -23,7 +24,7 @@ function App() {
     <BrowserRouter>
       <RefineKbarProvider>
         <Refine
-          dataProvider={dataProvider("https://api.fake-rest.refine.dev")}
+          dataProvider={dataProvider("http://127.0.0.1:3333/api")}
           routerProvider={routerBindings}
           authProvider={authProvider}
           i18nProvider={i18nProvider}
@@ -40,7 +41,8 @@ function App() {
                 </MainLayout>
               }
             >
-              <Route index element={<WelcomePage />} />
+              <Route index element={<ItemList />} />
+              <Route path="items" element={<ItemList />} />
             </Route>
           </Routes>
           <RefineKbar />

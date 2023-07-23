@@ -19,7 +19,8 @@
     "paths": {
       "@src/*": ["src/*"],
       "@components/*": ["src/components/*"],
-      "@pages/*": ["src/pages/*"]
+      "@pages/*": ["src/pages/*"],
+      "@providers/*": ["src/providers/*"],
     }
   },
   "include": ["src", "vite.config.ts"],

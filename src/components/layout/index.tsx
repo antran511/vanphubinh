@@ -5,18 +5,32 @@ import {
   IconHistogram,
   IconLive,
   IconSetting,
+  IconSemiLogo,
 } from "@douyinfe/semi-icons";
-import { Layout, Nav, Button, Breadcrumb, Avatar } from "@douyinfe/semi-ui";
+import { Layout, Nav, Avatar, Typography } from "@douyinfe/semi-ui";
 import { PropsWithChildren } from "react";
+import { useMediaQuery } from "react-responsive";
 
 export const MainLayout: React.FC<PropsWithChildren> = ({ children }) => {
-  const { Header, Sider, Content } = Layout;
+  const isDesktopOrLaptop = useMediaQuery({
+    query: "(min-width: 1224px)",
+  });
+  if (!isDesktopOrLaptop) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <Typography>
+          Trang web này chưa dùng được trên màn hình cỡ nhỏ
+        </Typography>
+      </div>
+    );
+  }
+  const { Sider, Content } = Layout;
   return (
     <Layout style={{ height: "100vh" }}>
       <Sider style={{ backgroundColor: "var(--semi-color-bg-1)" }}>
         <Nav
           defaultSelectedKeys={["Home"]}
-          style={{ maxWidth: 220, height: "100%" }}
+          style={{ height: "100%" }}
           items={[
             { itemKey: "Home", text: "Home", icon: <IconHome size="large" /> },
             {
@@ -31,53 +45,25 @@ export const MainLayout: React.FC<PropsWithChildren> = ({ children }) => {
               icon: <IconSetting size="large" />,
             },
           ]}
-          header={{
-            logo: (
-              <img src="//lf1-cdn-tos.bytescm.com/obj/ttfe/ies/semi/webcast_logo.svg" />
-            ),
-            text: "Webcast",
-          }}
-        />
-      </Sider>
-      <Layout>
-        <Header style={{ backgroundColor: "var(--semi-color-bg-1)" }}>
-          <Nav
-            mode="horizontal"
-            footer={
-              <>
-                <Button
-                  theme="borderless"
-                  icon={<IconBell size="large" />}
-                  style={{
-                    color: "var(--semi-color-text-2)",
-                    marginRight: "12px",
-                  }}
-                />
-                <Button
-                  theme="borderless"
-                  icon={<IconHelpCircle size="large" />}
-                  style={{
-                    color: "var(--semi-color-text-2)",
-                    marginRight: "12px",
-                  }}
-                />
-                <Avatar color="orange" size="small">
-                  YJ
-                </Avatar>
-              </>
-            }
-          ></Nav>
-        </Header>
-        <Content>
-          <Breadcrumb
+        >
+          <Nav.Header
             style={{
-              marginBottom: "24px",
+              paddingTop: "1.35rem",
+              paddingBottom: "1.35rem",
             }}
-            routes={["Home", "Page Section", "Pagge Ssection", "Detail"]}
-          />
-          {children}
-        </Content>
-      </Layout>
+            logo={<IconSemiLogo style={{ fontSize: 36 }} />}
+            text="Vạn Phú Bình"
+          ></Nav.Header>
+          <Nav.Footer>
+            <Nav.Item>
+              <Avatar color="orange" size="small">
+                YJ
+              </Avatar>
+            </Nav.Item>
+          </Nav.Footer>
+        </Nav>
+      </Sider>
+      <Content>{children}</Content>
     </Layout>
   );
 };
