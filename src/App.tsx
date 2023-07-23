@@ -1,4 +1,5 @@
 import { authProvider } from "./authProvider";
+import { MainLayout } from "@components/layout";
 import { Refine, WelcomePage } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import routerBindings, {
@@ -7,7 +8,7 @@ import routerBindings, {
 } from "@refinedev/react-router-v6";
 import dataProvider from "@refinedev/simple-rest";
 import { useTranslation } from "react-i18next";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -32,7 +33,15 @@ function App() {
           }}
         >
           <Routes>
-            <Route index element={<WelcomePage />} />
+            <Route
+              element={
+                <MainLayout>
+                  <Outlet />
+                </MainLayout>
+              }
+            >
+              <Route index element={<WelcomePage />} />
+            </Route>
           </Routes>
           <RefineKbar />
           <UnsavedChangesNotifier />
