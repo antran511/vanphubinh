@@ -1,1 +1,1 @@
-export { PartnerAutoComplete } from "./partnerAutocomplete";
+export { PartnerSelect } from "./partnerSelect";

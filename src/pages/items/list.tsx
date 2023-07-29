@@ -26,7 +26,7 @@ export const ItemList = () => {
   >({
     resource: "items",
     pagination: {
-      pageSize: 10,
+      pageSize: 15,
     },
   });
   const items = tableQueryResult?.data?.data;
@@ -42,8 +42,8 @@ export const ItemList = () => {
     [current, pageSize, setCurrent, total]
   );
   return (
-    <div>
-      <div className="flex items-end justify-between gap-4 px-6 py-5 ">
+    <div className="px-6">
+      <div className="flex items-end justify-between gap-4 py-5">
         <Title heading={4}>Hàng hoá</Title>
         <Button
           theme="solid"
@@ -63,6 +63,7 @@ export const ItemList = () => {
           dataSource={items}
           pagination={pagination}
           loading={isLoading}
+          size="middle"
         />
       </div>
     </div>

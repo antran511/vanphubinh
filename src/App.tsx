@@ -3,6 +3,7 @@ import { ItemList } from "@pages/items";
 import { SaleOrderCreate, SaleOrderList } from "@pages/saleOrders";
 import { authProvider } from "@providers/authProvider";
 import { dataProvider } from "@providers/dataProvider";
+import { notificationProvider } from "@providers/notificationProvider";
 import { Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import routerBindings, {
@@ -29,6 +30,7 @@ function App() {
           routerProvider={routerBindings}
           authProvider={authProvider}
           i18nProvider={i18nProvider}
+          notificationProvider={notificationProvider}
           options={{
             syncWithLocation: true,
             warnWhenUnsavedChanges: true,

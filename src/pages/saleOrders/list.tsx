@@ -1,6 +1,6 @@
-import { Button, Table, Typography } from "@douyinfe/semi-ui";
+import { Button, Table, Typography, Modal } from "@douyinfe/semi-ui";
 import { HttpError, useGo, useTable } from "@refinedev/core";
-import { IItem, ISaleOrder } from "@src/interfaces";
+import { ISaleOrder } from "@src/interfaces";
 import { useMemo } from "react";
 
 export const SaleOrderList = () => {
@@ -9,7 +9,7 @@ export const SaleOrderList = () => {
   const columns = [
     {
       title: "ID",
-      dataIndex: "Mã đơn hàng",
+      dataIndex: "id",
     },
     {
       title: "Khách hàng",
@@ -22,7 +22,7 @@ export const SaleOrderList = () => {
   >({
     resource: "sale-orders",
     pagination: {
-      pageSize: 10,
+      pageSize: 15,
     },
   });
   const saleOrders = tableQueryResult?.data?.data;
@@ -38,9 +38,9 @@ export const SaleOrderList = () => {
     [current, pageSize, setCurrent, total]
   );
   return (
-    <div>
-      <div className="flex items-end justify-between gap-4 px-6 py-5 ">
-        <Title heading={4}>Hàng hoá</Title>
+    <div className="px-6">
+      <div className="flex items-end justify-between gap-4 py-5">
+        <Title heading={4}>Đơn đặt hàng</Title>
         <Button
           theme="solid"
           onClick={() => {
@@ -55,10 +55,12 @@ export const SaleOrderList = () => {
       </div>
       <div className="">
         <Table
+          style={{ maxHeight: "30%" }}
           columns={columns}
           dataSource={saleOrders}
           pagination={pagination}
           loading={isLoading}
+          size="middle"
         />
       </div>
     </div>
