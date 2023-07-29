@@ -61,7 +61,7 @@ export const SaleOrderCreate = () => {
   );
   return (
     <div>
-      <div className="flex items-end justify-between gap-4 px-3 pt-5">
+      <div className="flex items-end justify-between gap-4 px-3 pt-5 pb-2">
         <Title heading={4}>Tạo đơn bán hàng</Title>
         <Button
           theme="solid"
