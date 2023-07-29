@@ -37,4 +37,16 @@ export interface ISaleOrder {
   customerId: number;
   discount: number;
   customer: IPartner;
+  createdAt: string;
+}
+export interface IProductionOrder {
+  id: number;
+  saleOrderId: number;
+  itemId: number;
+  item: IItem;
+  quantity: number;
+  finishedQuantity: number;
+  finishedUomId: number;
+  createdAt: string;
+  updatedAt: string;
 }
