@@ -1,6 +1,11 @@
 import { MainLayout } from "@components/layout";
 import { ItemList } from "@pages/items";
-import { SaleOrderCreate, SaleOrderList } from "@pages/saleOrders";
+import { ProductionOrderList } from "@pages/productionOrders";
+import {
+  SaleOrderCreate,
+  SaleOrderList,
+  SaleOrderShow,
+} from "@pages/saleOrders";
 import { authProvider } from "@providers/authProvider";
 import { dataProvider } from "@providers/dataProvider";
 import { notificationProvider } from "@providers/notificationProvider";
@@ -35,6 +40,22 @@ function App() {
             syncWithLocation: true,
             warnWhenUnsavedChanges: true,
           }}
+          resources={[
+            {
+              name: "production-orders",
+              list: "/production-orders",
+            },
+            {
+              name: "items",
+              list: "/items",
+            },
+            {
+              name: "sale-orders",
+              list: "/sale-orders",
+              create: "/sale-orders/create",
+              show: "/sale-orders/show/:id",
+            },
+          ]}
         >
           <Routes>
             <Route
@@ -49,6 +70,10 @@ function App() {
               <Route path="sale-orders">
                 <Route index element={<SaleOrderList />} />
                 <Route path="create" element={<SaleOrderCreate />} />
+                <Route path="show/:id" element={<SaleOrderShow />} />
+              </Route>
+              <Route path="production-orders">
+                <Route index element={<ProductionOrderList />} />
               </Route>
             </Route>
           </Routes>

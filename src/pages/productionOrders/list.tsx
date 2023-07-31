@@ -1,11 +1,18 @@
-import { Button, Table, Typography } from "@douyinfe/semi-ui";
-import { HttpError, useGo, useTable } from "@refinedev/core";
-import { IProductionOrder } from "@src/interfaces";
-import { useMemo } from "react";
+import { Button, Space, Table, Tag, Typography } from "@douyinfe/semi-ui";
+import { TagColor } from "@douyinfe/semi-ui/lib/es/tag";
+import { HttpError, useDeleteMany, useGo, useTable } from "@refinedev/core";
+import EnumType, { IProductionOrder } from "@src/interfaces";
+import { useMemo, useState } from "react";
 
 export const ProductionOrderList = () => {
   const go = useGo();
   const { Title } = Typography;
+  const { ProductionOrderStatus } = EnumType;
+  const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>(
+    []
+  );
+  const { mutate } = useDeleteMany();
+
   const columns = [
     {
       title: "ID",
@@ -31,6 +38,43 @@ export const ProductionOrderList = () => {
       title: "Ngày tạo",
       dataIndex: "createdAt",
     },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      render: (status: string) => {
+        let translatedStatus = "";
+        let color: TagColor = "white";
+        switch (status) {
+          case ProductionOrderStatus.WAITING:
+            translatedStatus = "Chờ sản xuất";
+            color = "grey";
+            break;
+          case ProductionOrderStatus.MANUFACTURING:
+            translatedStatus = "Đang sản xuất";
+            color = "blue";
+            break;
+          case ProductionOrderStatus.PAUSED:
+            translatedStatus = "Hoãn";
+            color = "orange";
+            break;
+          case ProductionOrderStatus.FINISHED:
+            translatedStatus = "Đã huỷ";
+            color = "green";
+            break;
+          case ProductionOrderStatus.CANCELLED:
+            translatedStatus = "Đã huỷ";
+            color = "red";
+            break;
+          default:
+            translatedStatus = "Mới";
+        }
+        return <Tag color={color}>{translatedStatus}</Tag>;
+      },
+    },
+    {
+      title: "Đơn bán hàng",
+      dataIndex: "saleOrderId",
+    },
   ];
   const { tableQueryResult, current, setCurrent, pageSize } = useTable<
     IProductionOrder,
@@ -53,24 +97,51 @@ export const ProductionOrderList = () => {
     }),
     [current, pageSize, setCurrent, total]
   );
+  const rowSelection = useMemo(() => {
+    return {
+      selectedRowKeys: selectedRowKeys,
+      onChange: (selectedRowKeys?: (string | number)[]) => {
+        if (!selectedRowKeys) return;
+        setSelectedRowKeys(selectedRowKeys);
+      },
+    };
+  }, [selectedRowKeys]);
+
   return (
     <div className="px-6">
-      <div className="flex items-end justify-between gap-4 py-5">
-        <Title heading={4}>Lệnh sản xuất</Title>
-        <Button
-          theme="solid"
-          onClick={() => {
-            go({
-              to: "/production-orders/create",
-              type: "push",
-            });
-          }}
-        >
-          Thêm mới
-        </Button>
+      <div className="flex items-end justify-between gap-4 py-5 flex-wrap">
+        <Title heading={3}>Lệnh sản xuất</Title>
+        <Space>
+          <Button
+            theme="solid"
+            onClick={() => {
+              go({
+                to: "/production-orders/create",
+                type: "push",
+              });
+            }}
+          >
+            Thêm mới
+          </Button>
+          <Button
+            theme="solid"
+            type="danger"
+            disabled={selectedRowKeys.length === 0}
+            onClick={() => {
+              mutate({
+                resource: "production-orders",
+                ids: selectedRowKeys,
+              });
+            }}
+          >
+            Xoá
+          </Button>
+        </Space>
       </div>
       <div className="">
         <Table
+          rowSelection={rowSelection}
+          rowKey="id"
           style={{ maxHeight: "30%" }}
           columns={columns}
           dataSource={productionOrders}

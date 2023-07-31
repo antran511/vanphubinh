@@ -24,21 +24,29 @@ export const PartnerSelect = ({ field }: PartnerSelectProps) => {
     </div>
   );
   return (
-    <Select
-      rules={[
-        {
-          required: true,
-          message: "Không thể bỏ trống",
-        },
-      ]}
-      label="Khách hàng"
-      labelPosition="left"
-      field={field}
-      style={{ width: "100%" }}
-      optionList={options}
-      onSearch={onSearch}
-      loading={loading}
-      innerBottomSlot={innerSlotNode}
-    />
+    <div className="flex w-full">
+      <div className="grow w-full">
+        <Select
+          className="grow"
+          rules={[
+            {
+              required: true,
+              message: "Không thể bỏ trống",
+            },
+          ]}
+          label="Khách hàng"
+          labelPosition="left"
+          field={field}
+          style={{ width: "100%" }}
+          optionList={options}
+          onSearch={onSearch}
+          loading={loading}
+          innerBottomSlot={innerSlotNode}
+        />
+      </div>
+      <div className="py-3 pl-2">
+        <Button>+</Button>
+      </div>
+    </div>
   );
 };

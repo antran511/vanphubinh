@@ -25,6 +25,7 @@ export const SaleOrderCreate = () => {
         resource: "sale-orders",
         values: values,
         errorNotification: (data, values, resource) => {
+          console.log(values);
           return {
             description: `Lỗi khởi tạo đơn hàng`,
             message: "",
@@ -60,9 +61,9 @@ export const SaleOrderCreate = () => {
     </div>
   );
   return (
-    <div>
-      <div className="flex items-end justify-between gap-4 px-3 pt-5 pb-2">
-        <Title heading={4}>Tạo đơn bán hàng</Title>
+    <div className="px-6">
+      <div className="flex items-end justify-between gap-4 pt-5 pb-2">
+        <Title heading={3}>Tạo đơn bán hàng</Title>
         <Button
           theme="solid"
           onClick={() => api.current?.submitForm()}
@@ -71,7 +72,7 @@ export const SaleOrderCreate = () => {
           Thêm mới
         </Button>
       </div>
-      <div className="px-3">
+      <div>
         <Form
           onSubmit={handleSubmit}
           getFormApi={(formApi) => (api.current = formApi)}
@@ -115,7 +116,7 @@ export const SaleOrderCreate = () => {
                               Thuế VAT
                             </th>
                             <th scope="col" className="px-4 py-2">
-                              Tạm tính
+                              Thành tiền
                             </th>
                             <th scope="col" className="px-4 py-2">
                               Ngày giao hàng
@@ -132,25 +133,35 @@ export const SaleOrderCreate = () => {
                               <td className="px-3 align-top pt-5 w-2">
                                 {i + 1}
                               </td>
-                              <td className="px-3 align-top w-60">
-                                <Select
-                                  noLabel
-                                  filter
-                                  remote
-                                  onSearch={onSearch}
-                                  dropdownMatchSelectWidth
-                                  field={`${field}[itemId]`}
-                                  optionList={options}
-                                  loading={loadingItems}
-                                  style={{ minWidth: "12rem", width: "100%" }}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: "Không thể bỏ trống",
-                                    },
-                                  ]}
-                                  innerBottomSlot={innerSlotNode}
-                                />
+                              <td className="px-3 align-top">
+                                <div className="flex w-full">
+                                  <div className="grow w-full">
+                                    <Select
+                                      noLabel
+                                      filter
+                                      remote
+                                      onSearch={onSearch}
+                                      dropdownMatchSelectWidth
+                                      field={`${field}[itemId]`}
+                                      optionList={options}
+                                      loading={loadingItems}
+                                      style={{
+                                        minWidth: "12rem",
+                                        width: "100%",
+                                      }}
+                                      rules={[
+                                        {
+                                          required: true,
+                                          message: "Không thể bỏ trống",
+                                        },
+                                      ]}
+                                      innerBottomSlot={innerSlotNode}
+                                    />
+                                  </div>
+                                  <div className="py-3 pl-2">
+                                    <Button>+</Button>
+                                  </div>
+                                </div>
                               </td>
 
                               <td className="px-3 align-top">
@@ -242,6 +253,7 @@ export const SaleOrderCreate = () => {
                               </td>
                               <td className="px-3 align-top w-40">
                                 <DatePicker
+                                  format="dd/MM/yyyy"
                                   field={`${field}[deliveryDate]`}
                                   noLabel
                                   density="compact"
@@ -276,7 +288,7 @@ export const SaleOrderCreate = () => {
                     </div>
 
                     <Button
-                      onClick={addWithInitValue}
+                      onClick={() => addWithInitValue({ taxRate: 0 })}
                       icon={<IconPlusCircle />}
                       theme="borderless"
                       size="small"

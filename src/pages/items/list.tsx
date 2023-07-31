@@ -43,8 +43,8 @@ export const ItemList = () => {
   );
   return (
     <div className="px-6">
-      <div className="flex items-end justify-between gap-4 py-5">
-        <Title heading={4}>Hàng hoá</Title>
+      <div className="flex items-end justify-between gap-4 py-5 flex-wrap">
+        <Title heading={3}>Hàng hoá</Title>
         <Button
           theme="solid"
           onClick={() => {
