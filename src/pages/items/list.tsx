@@ -54,7 +54,7 @@ export const ItemList = () => {
             });
           }}
         >
-          Thêm mới
+          Tạo
         </Button>
       </div>
       <div className="">

@@ -1,5 +1,6 @@
 import { IconEyeOpened, IconEdit, IconDelete } from "@douyinfe/semi-icons";
-import { Button, Table, Typography } from "@douyinfe/semi-ui";
+import { Button, Table, Tag, Typography } from "@douyinfe/semi-ui";
+import { TagColor } from "@douyinfe/semi-ui/lib/es/tag";
 import {
   HttpError,
   useGetToPath,
@@ -7,22 +8,15 @@ import {
   useResource,
   useTable,
 } from "@refinedev/core";
-import { SaleLinesModal } from "@src/components/sale";
-import { ISaleOrder } from "@src/interfaces";
+import EnumType, { ISaleOrder, ISaleOrderLine } from "@src/interfaces";
 import { useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
 export const SaleOrderList = () => {
+  const { SaleOrderStatus } = EnumType;
   const getToPath = useGetToPath();
   const { resource } = useResource();
-  console.log(resource);
-  const [visible, setVisible] = useState(false);
-  const ok = () => {
-    console.log("ok");
-  };
-  const close = () => {
-    setVisible(false);
-  };
+
   const isSmallDevice = useMediaQuery({
     query: "only screen and (max-width : 768px)",
   });
@@ -38,23 +32,27 @@ export const SaleOrderList = () => {
       dataIndex: "customer.partnerName",
     },
     {
-      title: "",
-      render: (record: ISaleOrder) => {
+      title: "Trạng thái",
+      dataIndex: "status",
+      render: (value: string) => {
+        let translatedStatus = "";
+        let color: TagColor = "green";
+        switch (value) {
+          case SaleOrderStatus.QUOTE:
+            translatedStatus = "Báo giá";
+            color = "grey";
+            break;
+
+          case SaleOrderStatus.CANCELLED:
+            translatedStatus = "Đã huỷ";
+            color = "white";
+            break;
+          default:
+            translatedStatus = "Đơn hàng";
+        }
         return (
-          <div className="flex space-x-2 w-36">
-            <Button
-              block
-              size={isSmallDevice ? "small" : "default"}
-              onClick={() => setVisible(true)}
-            >
-              Tạo đơn sản xuất
-            </Button>
-            <SaleLinesModal
-              visible={visible}
-              onClose={close}
-              onOK={ok}
-              saleOrderId={record.id}
-            />
+          <div>
+            <Tag color={color}>{translatedStatus}</Tag>
           </div>
         );
       },
@@ -82,6 +80,17 @@ export const SaleOrderList = () => {
             <Button
               icon={<IconEdit />}
               size={isSmallDevice ? "small" : "default"}
+              onClick={() => {
+                go({
+                  to: getToPath({
+                    resource: resource,
+                    action: "edit",
+                    meta: {
+                      id: record.id,
+                    },
+                  }),
+                });
+              }}
             />
             <Button
               icon={<IconDelete />}
@@ -127,7 +136,7 @@ export const SaleOrderList = () => {
             });
           }}
         >
-          Thêm mới
+          Tạo
         </Button>
       </div>
       <div className="">

@@ -121,7 +121,7 @@ export const ProductionOrderList = () => {
               });
             }}
           >
-            Thêm mới
+            Tạo
           </Button>
           <Button
             theme="solid"

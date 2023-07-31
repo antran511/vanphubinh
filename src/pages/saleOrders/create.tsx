@@ -1,5 +1,5 @@
 import { IconMinusCircle, IconPlusCircle } from "@douyinfe/semi-icons";
-import { Typography, Button, Form, ArrayField } from "@douyinfe/semi-ui";
+import { Typography, Button, Form, ArrayField, Space } from "@douyinfe/semi-ui";
 import { FormApi } from "@douyinfe/semi-ui/lib/es/form/interface";
 import { useSelect, useCreate, useGo } from "@refinedev/core";
 import { PartnerSelect } from "@src/components/partners";
@@ -24,15 +24,14 @@ export const SaleOrderCreate = () => {
       {
         resource: "sale-orders",
         values: values,
-        errorNotification: (data, values, resource) => {
-          console.log(values);
+        errorNotification: () => {
           return {
             description: `Lỗi khởi tạo đơn hàng`,
             message: "",
             type: "error",
           };
         },
-        successNotification: (data, values, resource) => {
+        successNotification: () => {
           return {
             message: `Tạo đơn hàng thành công`,
             description: "",
@@ -64,17 +63,32 @@ export const SaleOrderCreate = () => {
     <div className="px-6">
       <div className="flex items-end justify-between gap-4 pt-5 pb-2">
         <Title heading={3}>Tạo đơn bán hàng</Title>
-        <Button
-          theme="solid"
-          onClick={() => api.current?.submitForm()}
-          disabled={isLoading}
-        >
-          Thêm mới
-        </Button>
+        <Space>
+          <Button
+            theme="solid"
+            onClick={() => api.current?.submitForm()}
+            disabled={isLoading}
+          >
+            Tạo
+          </Button>
+          <Button
+            theme="solid"
+            onClick={() => {
+              api.current?.setValue("shouldConfirm", true);
+              api.current?.submitForm();
+            }}
+            disabled={isLoading}
+          >
+            Tạo và xác nhận
+          </Button>
+        </Space>
       </div>
       <div>
         <Form
           onSubmit={handleSubmit}
+          initValues={{
+            shouldConfirm: false,
+          }}
           getFormApi={(formApi) => (api.current = formApi)}
           render={({ values }) => (
             <>

@@ -10,6 +10,13 @@ enum ProductionOrderStatus {
   FINISHED = "FINISHED",
   CANCELLED = "CANCELLED",
 }
+
+enum SaleOrderStatus {
+  QUOTE = "QUOTE",
+  SALE_ORDER = "SALE_ORDER",
+  CANCELLED = "CANCELLED",
+}
+
 export interface IItem {
   id: number;
   itemName: string;
@@ -30,7 +37,7 @@ enum ItemType {
   SERVICE = "SERVICE",
 }
 
-export default { ProductionOrderStatus, ItemType };
+export default { ProductionOrderStatus, ItemType, SaleOrderStatus };
 export interface IPartner {
   id: number;
   partnerName: string;
@@ -46,6 +53,7 @@ export interface ISaleOrder {
   customer: IPartner;
   createdAt: string;
   saleOrderLines: ISaleOrderLine[];
+  status: SaleOrderStatus;
 }
 export interface IProductionOrder {
   id: string;
@@ -58,6 +66,7 @@ export interface IProductionOrder {
   finishedUomId: number;
   createdAt: string;
   updatedAt: string;
+  status: ProductionOrderStatus;
 }
 
 export interface ISaleOrderLine {

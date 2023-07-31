@@ -1,35 +1,33 @@
-import { Notification as SemiNoti } from "@douyinfe/semi-ui";
+import { Toast } from "@douyinfe/semi-ui";
 import { NotificationProvider } from "@refinedev/core";
 
 export const notificationProvider = (): NotificationProvider => {
   return {
     open: ({ key, message, type, description }) => {
+      console.log("open", key, message, type, description);
       switch (type) {
         case "error":
-          SemiNoti.error({
+          Toast.error({
             id: key,
-            title: description,
-            content: message,
+            content: description,
           });
           break;
         case "success":
-          SemiNoti.success({
+          Toast.success({
             id: key,
-            title: description,
-            content: message,
+            content: description,
           });
           break;
         default:
-          SemiNoti.open({
+          Toast.info({
             id: key,
-            title: description,
-            content: message,
+            content: description,
           });
           break;
       }
     },
     close: (key) => {
-      SemiNoti.close(key);
+      Toast.close(key);
     },
   };
 };

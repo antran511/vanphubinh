@@ -10,6 +10,7 @@
     "@refinedev/kbar": "^1.1.0",
     "@refinedev/react-router-v6": "^4.1.0",
     "@refinedev/simple-rest": "^4.0.0",
+    "@semi-bot/semi-theme-taichu-design-system": "^1.0.1",
     "@semi-bot/semi-theme-universedesign": "^1.0.12",
     "axios": "^0.26.1",
     "i18next": "^20.1.0",

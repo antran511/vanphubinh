@@ -5,6 +5,7 @@ import {
   SaleOrderCreate,
   SaleOrderList,
   SaleOrderShow,
+  SaleOrderEdit,
 } from "@pages/saleOrders";
 import { authProvider } from "@providers/authProvider";
 import { dataProvider } from "@providers/dataProvider";
@@ -54,6 +55,7 @@ function App() {
               list: "/sale-orders",
               create: "/sale-orders/create",
               show: "/sale-orders/show/:id",
+              edit: "/sale-orders/edit/:id",
             },
           ]}
         >
@@ -71,6 +73,7 @@ function App() {
                 <Route index element={<SaleOrderList />} />
                 <Route path="create" element={<SaleOrderCreate />} />
                 <Route path="show/:id" element={<SaleOrderShow />} />
+                <Route path="edit/:id" element={<SaleOrderEdit />} />
               </Route>
               <Route path="production-orders">
                 <Route index element={<ProductionOrderList />} />

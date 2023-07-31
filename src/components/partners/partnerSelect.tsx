@@ -1,13 +1,18 @@
 import { Button, Form } from "@douyinfe/semi-ui";
 import { useSelect } from "@refinedev/core";
-import { IPartner } from "@src/interfaces";
+import EnumType, { IPartner } from "@src/interfaces";
 
 interface PartnerSelectProps {
   field: string;
+  saleOrderStatus?: string;
 }
 
-export const PartnerSelect = ({ field }: PartnerSelectProps) => {
+export const PartnerSelect = ({
+  field,
+  saleOrderStatus,
+}: PartnerSelectProps) => {
   const Select = Form.Select;
+  const { SaleOrderStatus } = EnumType;
 
   const { options, onSearch, queryResult } = useSelect<IPartner>({
     resource: "partners",
@@ -28,6 +33,9 @@ export const PartnerSelect = ({ field }: PartnerSelectProps) => {
       <div className="grow w-full">
         <Select
           className="grow"
+          disabled={
+            !!saleOrderStatus && saleOrderStatus !== SaleOrderStatus.QUOTE
+          }
           rules={[
             {
               required: true,
