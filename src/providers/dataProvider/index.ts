@@ -33,6 +33,7 @@ export const dataProvider = (
     }
 
     const generatedSort = generateSort(sorters);
+
     if (generatedSort) {
       const { _sort, _order } = generatedSort;
       query._sort = _sort.join(",");

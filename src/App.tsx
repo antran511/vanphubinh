@@ -1,6 +1,9 @@
 import { MainLayout } from "@components/layout";
 import { ItemList } from "@pages/items";
-import { ProductionOrderList } from "@pages/productionOrders";
+import {
+  ProductionOrderList,
+  ProductionOrderShow,
+} from "@pages/productionOrders";
 import {
   SaleOrderCreate,
   SaleOrderList,
@@ -45,6 +48,7 @@ function App() {
             {
               name: "production-orders",
               list: "/production-orders",
+              show: "/production-orders/show/:id",
             },
             {
               name: "items",
@@ -77,6 +81,7 @@ function App() {
               </Route>
               <Route path="production-orders">
                 <Route index element={<ProductionOrderList />} />
+                <Route path="show/:id" element={<ProductionOrderShow />} />
               </Route>
             </Route>
           </Routes>

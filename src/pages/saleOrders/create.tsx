@@ -268,7 +268,7 @@ export const SaleOrderCreate = () => {
                               <td className="px-3 align-top w-40">
                                 <DatePicker
                                   format="dd/MM/yyyy"
-                                  field={`${field}[deliveryDate]`}
+                                  field={`${field}[toDeliverAt]`}
                                   noLabel
                                   density="compact"
                                   placeholder="Chọn ngày"

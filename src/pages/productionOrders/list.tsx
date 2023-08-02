@@ -1,18 +1,36 @@
-import { Button, Space, Table, Tag, Typography } from "@douyinfe/semi-ui";
+import {
+  IconEyeOpened,
+  IconEdit,
+  IconDelete,
+  IconAlertTriangle,
+} from "@douyinfe/semi-icons";
+import { Button, Tag, Typography, Space, Table } from "@douyinfe/semi-ui";
 import { TagColor } from "@douyinfe/semi-ui/lib/es/tag";
-import { HttpError, useDeleteMany, useGo, useTable } from "@refinedev/core";
+import {
+  HttpError,
+  useDeleteMany,
+  useGetToPath,
+  useGo,
+  useResource,
+  useTable,
+} from "@refinedev/core";
 import EnumType, { IProductionOrder } from "@src/interfaces";
 import { useMemo, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 
 export const ProductionOrderList = () => {
   const go = useGo();
+  const { resource } = useResource();
   const { Title } = Typography;
-  const { ProductionOrderStatus } = EnumType;
+  const { ProductionOrderStatus, SaleOrderStatus } = EnumType;
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>(
     []
   );
   const { mutate } = useDeleteMany();
-
+  const isSmallDevice = useMediaQuery({
+    query: "only screen and (max-width : 768px)",
+  });
+  const getToPath = useGetToPath();
   const columns = [
     {
       title: "ID",
@@ -25,6 +43,9 @@ export const ProductionOrderList = () => {
     {
       title: "Số lượng",
       dataIndex: "quantity",
+      render: (value: string) => {
+        return <div>{Number(value).toLocaleString()} </div>;
+      },
     },
     {
       title: "Đơn vị",
@@ -37,6 +58,17 @@ export const ProductionOrderList = () => {
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
+    },
+    {
+      title: "Ngày giao hàng",
+      dataIndex: "saleOrderLine.toDeliverAt",
+      render: (value: string) => {
+        return <div>{new Date(value).toLocaleDateString()} </div>;
+      },
+    },
+    {
+      title: "Ghi chú",
+      dataIndex: "saleOrderLine.note",
     },
     {
       title: "Trạng thái",
@@ -73,7 +105,62 @@ export const ProductionOrderList = () => {
     },
     {
       title: "Đơn bán hàng",
-      dataIndex: "saleOrderId",
+      dataIndex: "saleOrder.id",
+      render: (saleOrderId: string, record: IProductionOrder) => {
+        const isSaleOrderCancelled =
+          record?.saleOrder?.status === SaleOrderStatus.CANCELLED;
+        return (
+          <div className="flex items-center gap-2">
+            {saleOrderId}{" "}
+            {isSaleOrderCancelled && (
+              <IconAlertTriangle style={{ color: "#E91E63" }} />
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      title: "",
+      render: (record: IProductionOrder) => {
+        return (
+          <div className="flex space-x-2">
+            <Button
+              icon={<IconEyeOpened />}
+              onClick={() => {
+                go({
+                  to: getToPath({
+                    resource: resource,
+                    action: "show",
+                    meta: {
+                      id: record.id,
+                    },
+                  }),
+                });
+              }}
+              size={isSmallDevice ? "small" : "default"}
+            />
+            <Button
+              icon={<IconEdit />}
+              size={isSmallDevice ? "small" : "default"}
+              onClick={() => {
+                go({
+                  to: getToPath({
+                    resource: resource,
+                    action: "edit",
+                    meta: {
+                      id: record.id,
+                    },
+                  }),
+                });
+              }}
+            />
+            <Button
+              icon={<IconDelete />}
+              size={isSmallDevice ? "small" : "default"}
+            />
+          </div>
+        );
+      },
     },
   ];
   const { tableQueryResult, current, setCurrent, pageSize } = useTable<

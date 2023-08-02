@@ -20,15 +20,11 @@ import {
   useParsed,
   useShow,
 } from "@refinedev/core";
-import EnumType, {
-  IProductionOrder,
-  ISaleOrder,
-  ISaleOrderLine,
-} from "@src/interfaces";
+import EnumType, { IProductionOrder, ISaleOrderLine } from "@src/interfaces";
 import { useMemo, useState } from "react";
 
-export const SaleOrderShow = () => {
-  const { ItemType, SaleOrderStatus, ProductionOrderStatus } = EnumType;
+export const ProductionOrderShow = () => {
+  const { ItemType, ProductionOrderStatus } = EnumType;
   const { id } = useParsed();
 
   const go = useGo();
@@ -65,14 +61,14 @@ export const SaleOrderShow = () => {
 
   const { mutate, isLoading: isCreatingProductionOrders } = useCustomMutation();
   const { mutate: updateStatus, isLoading: isUpdatingStatus } =
-    useCustomMutation<ISaleOrder, HttpError>();
+    useCustomMutation<IProductionOrder, HttpError>();
 
   const invalidate = useInvalidate();
 
   const createProductionOrders = async () => {
     mutate(
       {
-        url: `${apiUrl}/sale-orders/${id}/create-production-order`,
+        url: `${apiUrl}/production-orders/${id}/create-production-order`,
         method: "post",
         values: {
           saleOrderLineIds: selectedRowKeys,
@@ -97,7 +93,7 @@ export const SaleOrderShow = () => {
         onSuccess: () => {
           setSelectedRowKeys([]);
           invalidate({
-            resource: "sale-orders",
+            resource: "production-orders",
             invalidates: ["detail"],
             id,
           });
@@ -106,8 +102,8 @@ export const SaleOrderShow = () => {
     );
   };
 
-  const { queryResult } = useShow<ISaleOrder>({
-    resource: "sale-orders",
+  const { queryResult } = useShow<IProductionOrder>({
+    resource: "production-orders",
     id,
   });
   const { data, isLoading, isError } = queryResult;
@@ -127,7 +123,7 @@ export const SaleOrderShow = () => {
     );
   }
 
-  const saleOrder = data?.data;
+  const productionOrder = data?.data;
   const columns = [
     {
       title: "Sản phẩm",
@@ -229,17 +225,24 @@ export const SaleOrderShow = () => {
     let translatedStatus = "";
     let color: TagColor = "green";
     switch (status) {
-      case SaleOrderStatus.QUOTE:
-        translatedStatus = "Báo giá";
-        color = "grey";
+      case ProductionOrderStatus.MANUFACTURING:
+        translatedStatus = "Đang sản xuất";
+        color = "blue";
         break;
-
-      case SaleOrderStatus.CANCELLED:
+      case ProductionOrderStatus.PAUSED:
+        translatedStatus = "Hoãn";
+        color = "yellow";
+        break;
+      case ProductionOrderStatus.FINISHED:
+        translatedStatus = "Đã hoàn thàh";
+        color = "green";
+        break;
+      case ProductionOrderStatus.CANCELLED:
         translatedStatus = "Đã huỷ";
         color = "white";
         break;
       default:
-        translatedStatus = "Đơn hàng";
+        translatedStatus = "Mới";
     }
     return (
       <div>
@@ -257,73 +260,32 @@ export const SaleOrderShow = () => {
             theme="solid"
             onClick={() => {
               go({
-                to: "/sale-orders/create",
+                to: "/production-orders/create",
                 type: "push",
               });
             }}
           >
             Tạo
           </Button>
-          {saleOrder && saleOrder?.status !== SaleOrderStatus.CANCELLED ? (
-            <Button
-              type="secondary"
-              theme="solid"
-              onClick={() => {
-                go({
-                  to: `/sale-orders/edit/${id}`,
-                  type: "push",
-                });
-              }}
-            >
-              Sửa
-            </Button>
-          ) : null}
-          {saleOrder && saleOrder?.status === SaleOrderStatus.QUOTE ? (
-            <Button
-              type="tertiary"
-              theme="solid"
-              loading={isUpdatingStatus}
-              onClick={() => {
-                updateStatus(
-                  {
-                    url: `${apiUrl}/sale-orders/${saleOrder?.id}/update-status`,
-                    method: "post",
-                    values: {
-                      status: SaleOrderStatus.SALE_ORDER,
-                    },
-                  },
-                  {
-                    onSuccess: () => {
-                      invalidate({
-                        resource: "sale-orders",
-                        invalidates: ["detail"],
-                        id,
-                      });
-                    },
-                  }
-                );
-              }}
-            >
-              Xác nhận
-            </Button>
-          ) : null}
-          {saleOrder && saleOrder?.status !== SaleOrderStatus.CANCELLED ? (
+
+          {productionOrder &&
+          productionOrder?.status !== ProductionOrderStatus.CANCELLED ? (
             <Popconfirm
               title="Bạn có chắc muốn huỷ đơn hàng này?"
               content="Huỷ đơn hàng sẽ không huỷ đơn sản xuất liên quan"
               onConfirm={() => {
                 updateStatus(
                   {
-                    url: `${apiUrl}/sale-orders/${saleOrder?.id}/update-status`,
+                    url: `${apiUrl}/production-orders/${productionOrder?.id}/update-status`,
                     method: "post",
                     values: {
-                      status: SaleOrderStatus.CANCELLED,
+                      status: ProductionOrderStatus.CANCELLED,
                     },
                   },
                   {
                     onSuccess: () => {
                       invalidate({
-                        resource: "sale-orders",
+                        resource: "production-orders",
                         invalidates: ["detail"],
                         id,
                       });
@@ -345,141 +307,51 @@ export const SaleOrderShow = () => {
         </div>
       ) : (
         <div>
-          <div className="flex flex-col space-y-4">
+          <div className="flex flex-col	gap-4">
             <div>
               <Title heading={6}>Mã đơn hàng</Title>
-              <Typography>{saleOrder?.id}</Typography>
+              <Typography>{productionOrder?.id}</Typography>
             </div>
+
             <div>
               <Title heading={6}>Khách hàng</Title>
-              <Typography>{saleOrder?.customer?.partnerName}</Typography>
+              <Typography>
+                {productionOrder?.saleOrder?.customer.partnerName}
+              </Typography>
             </div>
             <div>
               <Title heading={6}>Trạng thái</Title>
-              {statusTag(saleOrder?.status)}
+              <Typography>{statusTag(productionOrder?.status)}</Typography>
+            </div>
+            <div>
+              <Title heading={6}>Sản phẩm</Title>
+              <Typography>{productionOrder?.item.itemName}</Typography>
             </div>
 
             <div>
-              <Banner
-                fullMode={false}
-                type="info"
-                bordered
-                icon={null}
-                closeIcon={null}
-                title={
-                  <div
-                    style={{
-                      fontWeight: 600,
-                      fontSize: "14px",
-                      lineHeight: "20px",
-                    }}
-                  >{`Theo dõi lệnh sản xuất qua đơn bán hàng`}</div>
-                }
-                description={<div>Điền vào hdsd</div>}
-              />
-              <div className="flex items-end justify-between gap-4 py-5 flex-wrap">
-                <Title heading={6}>Dòng đơn hàng</Title>
-                <Button
-                  theme="borderless"
-                  onClick={() => createProductionOrders()}
-                  disabled={
-                    selectedRowKeys.length === 0 ||
-                    saleOrder?.status !== SaleOrderStatus.SALE_ORDER
-                  }
-                  loading={isCreatingProductionOrders}
-                >
-                  Tạo lệnh sản xuất
-                </Button>
-              </div>
-
-              <Table
-                rowSelection={rowSelection}
-                rowKey="id"
-                columns={columns}
-                dataSource={saleOrder?.saleOrderLines}
-                size="middle"
-              />
+              <Title heading={6}>Số lượng</Title>
+              <Typography>
+                {Number(productionOrder?.quantity).toLocaleString()}
+              </Typography>
+            </div>
+            <div>
+              <Title heading={6}>Đơn vị</Title>
+              <Typography>{productionOrder?.item.uom?.uomName}</Typography>
             </div>
 
-            <div className="px-3 md:grid md:justify-items-end">
-              <div className="md:w-1/4">
-                <div className="bg-white rounded-lg">
-                  <h4 className="text-md font-semibold mb-1">Summary</h4>
-                  <div className="flex text-sm justify-between mb-1">
-                    <span>Tổng (chưa VAT)</span>
-                    <span>
-                      {(
-                        saleOrder?.saleOrderLines?.reduce(
-                          (
-                            partialSum: number,
-                            saleLine: { quantity: number; unitPrice: number }
-                          ) => {
-                            return (
-                              partialSum +
-                              saleLine.quantity * saleLine.unitPrice
-                            );
-                          },
-                          0
-                        ) || 0
-                      ).toLocaleString("en-US")}{" "}
-                      ₫
-                    </span>
-                  </div>
-                  <div className="flex text-sm justify-between mb-1">
-                    <span>Thuế VAT</span>
-                    <span>
-                      {(
-                        saleOrder?.saleOrderLines?.reduce(
-                          (
-                            partialSum: number,
-                            saleLine: {
-                              quantity: number;
-                              unitPrice: number;
-                              taxRate: number;
-                            }
-                          ) => {
-                            return (
-                              partialSum +
-                              saleLine.quantity *
-                                saleLine.unitPrice *
-                                saleLine.taxRate
-                            );
-                          },
-                          0
-                        ) || 0
-                      ).toLocaleString("en-US")}{" "}
-                      ₫
-                    </span>
-                  </div>
-
-                  <div className="flex text-sm justify-between">
-                    <span className="font-semibold">Total</span>
-                    <span className="font-semibold">
-                      {(
-                        saleOrder?.saleOrderLines?.reduce(
-                          (
-                            partialSum: number,
-                            saleLine: {
-                              quantity: number;
-                              unitPrice: number;
-                              taxRate: number;
-                            }
-                          ) => {
-                            return (
-                              partialSum +
-                              saleLine.quantity *
-                                saleLine.unitPrice *
-                                (1 + saleLine.taxRate)
-                            );
-                          },
-                          0
-                        ) || 0
-                      ).toLocaleString("en-US")}{" "}
-                      ₫
-                    </span>
-                  </div>
-                </div>
-              </div>
+            <div>
+              <Title heading={6}>Số lượng đã hoàn thành</Title>
+              <Typography>
+                {Number(productionOrder?.finishedUomId).toLocaleString()}
+              </Typography>
+            </div>
+            <div>
+              <Title heading={6}>Ngày tạo</Title>
+              <Typography>
+                {new Date(
+                  productionOrder?.createdAt ?? ""
+                ).toLocaleDateString()}
+              </Typography>
             </div>
           </div>
         </div>

@@ -1,5 +1,18 @@
-import { IconEyeOpened, IconEdit, IconDelete } from "@douyinfe/semi-icons";
-import { Button, Table, Tag, Typography } from "@douyinfe/semi-ui";
+import {
+  IconEyeOpened,
+  IconEdit,
+  IconDelete,
+  IconSearch,
+  IconFilter,
+} from "@douyinfe/semi-icons";
+import {
+  Button,
+  Table,
+  Tag,
+  Typography,
+  Input,
+  Dropdown,
+} from "@douyinfe/semi-ui";
 import { TagColor } from "@douyinfe/semi-ui/lib/es/tag";
 import {
   HttpError,
@@ -8,7 +21,7 @@ import {
   useResource,
   useTable,
 } from "@refinedev/core";
-import EnumType, { ISaleOrder, ISaleOrderLine } from "@src/interfaces";
+import EnumType, { ISaleOrder } from "@src/interfaces";
 import { useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
@@ -16,24 +29,81 @@ export const SaleOrderList = () => {
   const { SaleOrderStatus } = EnumType;
   const getToPath = useGetToPath();
   const { resource } = useResource();
+  const [status, setStatus] = useState<string[]>([]);
 
   const isSmallDevice = useMediaQuery({
     query: "only screen and (max-width : 768px)",
   });
   const go = useGo();
   const { Title } = Typography;
+
+  const {
+    tableQueryResult,
+    current,
+    setCurrent,
+    pageSize,
+    filters,
+    setFilters,
+  } = useTable<ISaleOrder, HttpError>({
+    resource: "sale-orders",
+    pagination: {
+      pageSize: 15,
+    },
+    sorters: {
+      initial: [
+        {
+          field: "createdAt",
+          order: "desc",
+        },
+      ],
+    },
+    filters: {
+      initial: [
+        // {
+        //   field: "status",
+        //   operator: "in",
+        //   value: [SaleOrderStatus.QUOTE, SaleOrderStatus.SALE_ORDER],
+        // },
+      ],
+    },
+  });
+  const currentFilterValues = useMemo(() => {
+    // Filters can be a LogicalFilter or a ConditionalFilter. ConditionalFilter not have field property. So we need to filter them.
+    // We use flatMap for better type support.
+    const logicalFilters = filters.flatMap((item) =>
+      "field" in item ? item : []
+    );
+
+    return {
+      title: logicalFilters.find((item) => item.field === "title")?.value || "",
+      status:
+        logicalFilters.find((item) => item.field === "status")?.value || "",
+    };
+  }, [filters]);
+
   const columns = [
     {
       title: "Mã đơn hàng",
       dataIndex: "id",
+      // sorter: (a: ISaleOrder, b: ISaleOrder) => (a.id > b.id ? 1 : -1),
+    },
+    {
+      title: "Ngày tạo",
+      dataIndex: "createdAt",
+      render: (value: string) => {
+        return new Date(value || "").toLocaleDateString();
+      },
     },
     {
       title: "Khách hàng",
       dataIndex: "customer.partnerName",
+      // sorter: (a: ISaleOrder, b: ISaleOrder) =>
+      //   a.customer.partnerName > b.customer.partnerName ? 1 : -1,
     },
     {
       title: "Trạng thái",
       dataIndex: "status",
+      useFullRender: true,
       render: (value: string) => {
         let translatedStatus = "";
         let color: TagColor = "green";
@@ -57,6 +127,7 @@ export const SaleOrderList = () => {
         );
       },
     },
+
     {
       title: "",
       render: (record: ISaleOrder) => {
@@ -101,15 +172,6 @@ export const SaleOrderList = () => {
       },
     },
   ];
-  const { tableQueryResult, current, setCurrent, pageSize } = useTable<
-    ISaleOrder,
-    HttpError
-  >({
-    resource: "sale-orders",
-    pagination: {
-      pageSize: 15,
-    },
-  });
   const saleOrders = tableQueryResult?.data?.data;
   const total = tableQueryResult?.data?.meta?.total;
   const isLoading = tableQueryResult?.isLoading || tableQueryResult?.isFetching;
@@ -127,19 +189,22 @@ export const SaleOrderList = () => {
     <div className="px-6">
       <div className="flex items-end justify-between gap-4 py-5 flex-wrap">
         <Title heading={3}>Đơn đặt hàng</Title>
-        <Button
-          theme="solid"
-          onClick={() => {
-            go({
-              to: "/sale-orders/create",
-              type: "push",
-            });
-          }}
-        >
-          Tạo
-        </Button>
+        <div className="flex gap-4">
+          <Input prefix={<IconSearch />} showClear></Input>
+          <Button
+            theme="solid"
+            onClick={() => {
+              go({
+                to: "/sale-orders/create",
+                type: "push",
+              });
+            }}
+          >
+            Tạo
+          </Button>
+        </div>
       </div>
-      <div className="">
+      <div>
         <Table
           style={{ maxHeight: "30%" }}
           columns={columns}

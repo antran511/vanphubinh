@@ -59,7 +59,7 @@ export const SaleOrderEdit = () => {
     </div>
   );
 
-  const { mutate } = useUpdate<ISaleOrder, HttpError>();
+  const { mutate, isLoading: isUpdating } = useUpdate<ISaleOrder, HttpError>();
   const handleSubmit = (values: ISaleOrder) => {
     mutate(
       {
@@ -125,6 +125,7 @@ export const SaleOrderEdit = () => {
           theme="solid"
           onClick={() => api.current?.submitForm()}
           disabled={isLoadingSaleOrder}
+          loading={isUpdating}
         >
           Lưu
         </Button>
@@ -335,7 +336,7 @@ export const SaleOrderEdit = () => {
                                 <td className="px-3 align-top w-40">
                                   <DatePicker
                                     format="dd/MM/yyyy"
-                                    field={`${field}[deliveryDate]`}
+                                    field={`${field}[toDeliverAt]`}
                                     noLabel
                                     density="compact"
                                     placeholder="Chọn ngày"
@@ -358,8 +359,9 @@ export const SaleOrderEdit = () => {
                                     icon={<IconMinusCircle />}
                                     disabled={
                                       arrayFields.length === 1 ||
-                                      values?.saleOrderLines[i]?.id !==
-                                        undefined
+                                      values?.saleOrderLines[i]?.id ===
+                                        undefined ||
+                                      values?.status !== SaleOrderStatus.QUOTE
                                     }
                                     onClick={remove}
                                     style={{ marginTop: 12, marginBottom: 12 }}

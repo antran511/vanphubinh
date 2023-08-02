@@ -67,6 +67,7 @@ export interface IProductionOrder {
   createdAt: string;
   updatedAt: string;
   status: ProductionOrderStatus;
+  saleOrder: ISaleOrder;
 }
 
 export interface ISaleOrderLine {
@@ -76,7 +77,7 @@ export interface ISaleOrderLine {
   quantity: number;
   unitPrice: number;
   taxRate: number;
-  deliveryDate: Date;
+  toDeliverAt: Date;
   note: string;
   item: IItem;
   productionOrder: IProductionOrder;
