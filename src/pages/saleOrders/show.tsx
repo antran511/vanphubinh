@@ -1,3 +1,4 @@
+import { IconPlusStroked } from "@douyinfe/semi-icons";
 import { IllustrationConstruction } from "@douyinfe/semi-illustrations";
 import {
   Banner,
@@ -146,7 +147,10 @@ export const SaleOrderShow = () => {
     },
     {
       title: "Sl đã hoàn thành",
-      dataIndex: "",
+      dataIndex: "finishedQuantity",
+      render: (value: string) => {
+        return <div>{Number(value).toLocaleString()} </div>;
+      },
     },
     {
       title: "Đơn giá",
@@ -203,7 +207,7 @@ export const SaleOrderShow = () => {
             color = "orange";
             break;
           case ProductionOrderStatus.FINISHED:
-            translatedStatus = "Đã huỷ";
+            translatedStatus = "Đã hoàn thành";
             color = "green";
             break;
           case ProductionOrderStatus.CANCELLED:
@@ -254,19 +258,17 @@ export const SaleOrderShow = () => {
         <Title heading={3}>Đơn bán hàng </Title>
         <Space>
           <Button
-            theme="solid"
+            icon={<IconPlusStroked />}
             onClick={() => {
               go({
                 to: "/sale-orders/create",
                 type: "push",
               });
             }}
-          >
-            Tạo
-          </Button>
+          />
+
           {saleOrder && saleOrder?.status !== SaleOrderStatus.CANCELLED ? (
             <Button
-              type="secondary"
               theme="solid"
               onClick={() => {
                 go({
@@ -463,8 +465,16 @@ export const SaleOrderShow = () => {
                               quantity: number;
                               unitPrice: number;
                               taxRate: number;
+                              finishedQuantity: number;
                             }
                           ) => {
+                            if (saleLine.finishedQuantity > 0)
+                              return (
+                                partialSum +
+                                saleLine.finishedQuantity *
+                                  saleLine.unitPrice *
+                                  (1 + saleLine.taxRate)
+                              );
                             return (
                               partialSum +
                               saleLine.quantity *

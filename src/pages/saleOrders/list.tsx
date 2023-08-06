@@ -3,7 +3,7 @@ import {
   IconEdit,
   IconDelete,
   IconSearch,
-  IconFilter,
+  IconPlusStroked,
 } from "@douyinfe/semi-icons";
 import {
   Button,
@@ -13,6 +13,7 @@ import {
   Input,
   Dropdown,
 } from "@douyinfe/semi-ui";
+import { TablePaginationProps } from "@douyinfe/semi-ui/lib/es/table";
 import { TagColor } from "@douyinfe/semi-ui/lib/es/tag";
 import {
   HttpError,
@@ -97,8 +98,7 @@ export const SaleOrderList = () => {
     {
       title: "Khách hàng",
       dataIndex: "customer.partnerName",
-      // sorter: (a: ISaleOrder, b: ISaleOrder) =>
-      //   a.customer.partnerName > b.customer.partnerName ? 1 : -1,
+      sorter: true,
     },
     {
       title: "Trạng thái",
@@ -192,20 +192,19 @@ export const SaleOrderList = () => {
         <div className="flex gap-4">
           <Input prefix={<IconSearch />} showClear></Input>
           <Button
-            theme="solid"
             onClick={() => {
               go({
                 to: "/sale-orders/create",
                 type: "push",
               });
             }}
-          >
-            Tạo
-          </Button>
+            icon={<IconPlusStroked />}
+          />
         </div>
       </div>
       <div>
         <Table
+          onChange={(e) => console.log(e)}
           style={{ maxHeight: "30%" }}
           columns={columns}
           rowKey="id"

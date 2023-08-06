@@ -66,6 +66,7 @@ export interface IProductionOrder {
   finishedUomId: number;
   createdAt: string;
   updatedAt: string;
+  finishedAt: string;
   status: ProductionOrderStatus;
   saleOrder: ISaleOrder;
 }
@@ -75,10 +76,27 @@ export interface ISaleOrderLine {
   saleOrderId: string;
   itemId: number;
   quantity: number;
+  finishedQuantity: number;
   unitPrice: number;
   taxRate: number;
   toDeliverAt: Date;
   note: string;
   item: IItem;
   productionOrder: IProductionOrder;
+}
+export interface IStockLocation {
+  id: number;
+  locationName: string;
+  parentStockLocationId: number;
+  childStockLocations: IStockLocation[];
+}
+export interface IInventoryLevel {
+  id: number;
+  itemId: number;
+  item: IItem;
+  locationId: number;
+  location: IStockLocation;
+  stockedQuantity: number;
+  reservedQuantity: number;
+  incomingQuantity: number;
 }

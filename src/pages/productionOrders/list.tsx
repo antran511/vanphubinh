@@ -54,16 +54,19 @@ export const ProductionOrderList = () => {
     {
       title: "Số lượng hoàn thành",
       dataIndex: "finishedQuantity",
+      render: (value: string) => {
+        return <div>{Number(value).toLocaleString()} </div>;
+      },
     },
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
     },
     {
-      title: "Ngày giao hàng",
+      title: "Hạn giao hàng",
       dataIndex: "saleOrderLine.toDeliverAt",
       render: (value: string) => {
-        return <div>{new Date(value).toLocaleDateString()} </div>;
+        return <div>{value ? new Date(value).toLocaleDateString() : ""} </div>;
       },
     },
     {
@@ -90,7 +93,7 @@ export const ProductionOrderList = () => {
             color = "orange";
             break;
           case ProductionOrderStatus.FINISHED:
-            translatedStatus = "Đã huỷ";
+            translatedStatus = "Đã hoàn thành";
             color = "green";
             break;
           case ProductionOrderStatus.CANCELLED:
@@ -142,6 +145,11 @@ export const ProductionOrderList = () => {
             <Button
               icon={<IconEdit />}
               size={isSmallDevice ? "small" : "default"}
+              disabled={
+                record.status === ProductionOrderStatus.FINISHED ||
+                record.status === ProductionOrderStatus.CANCELLED ||
+                !!record.saleOrder.id
+              }
               onClick={() => {
                 go({
                   to: getToPath({
@@ -208,7 +216,7 @@ export const ProductionOrderList = () => {
               });
             }}
           >
-            Tạo
+            +
           </Button>
           <Button
             theme="solid"

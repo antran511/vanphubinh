@@ -10,6 +10,7 @@ export const ItemList = () => {
     {
       title: "Tên mặt hàng",
       dataIndex: "itemName",
+      sorter: true,
     },
     {
       title: "Đơn vị tính",
@@ -54,7 +55,7 @@ export const ItemList = () => {
             });
           }}
         >
-          Tạo
+          +
         </Button>
       </div>
       <div className="">

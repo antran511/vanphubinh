@@ -14,7 +14,7 @@ import {
   useParsed,
   useGo,
   HttpError,
-  useOne,
+  useInvalidate,
   useUpdate,
   BaseKey,
   useGetToPath,
@@ -32,6 +32,7 @@ export const SaleOrderEdit = () => {
   const { id } = useParsed();
   const getToPath = useGetToPath();
   const { resource } = useResource();
+  const invalidate = useInvalidate();
 
   const { queryResult: saleOrderQueryResult } = useShow<ISaleOrder>({
     resource: "sale-orders",
@@ -85,6 +86,10 @@ export const SaleOrderEdit = () => {
                 id: id,
               },
             }),
+          });
+          invalidate({
+            resource: "production-orders",
+            invalidates: ["list", "many"],
           });
         },
       }

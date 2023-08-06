@@ -1,13 +1,14 @@
+import { IconLock, IconUnlock } from "@douyinfe/semi-icons";
 import { IllustrationConstruction } from "@douyinfe/semi-illustrations";
 import {
-  Banner,
   Button,
   Empty,
   Space,
   Spin,
-  Table,
   Tag,
   Typography,
+  InputNumber,
+  Modal,
 } from "@douyinfe/semi-ui";
 import { Popconfirm } from "@douyinfe/semi-ui";
 import { TagColor } from "@douyinfe/semi-ui/lib/es/tag";
@@ -15,90 +16,58 @@ import {
   HttpError,
   useApiUrl,
   useCustomMutation,
-  useGo,
   useInvalidate,
   useParsed,
   useShow,
 } from "@refinedev/core";
-import EnumType, { IProductionOrder, ISaleOrderLine } from "@src/interfaces";
-import { useMemo, useState } from "react";
+import EnumType, { IProductionOrder } from "@src/interfaces";
+import { useState } from "react";
 
 export const ProductionOrderShow = () => {
-  const { ItemType, ProductionOrderStatus } = EnumType;
+  const { ProductionOrderStatus } = EnumType;
   const { id } = useParsed();
+  const [finishedQuantity, setFinishedQuantity] = useState<number>(0);
+  const [locked, setLocked] = useState<boolean>(true);
 
-  const go = useGo();
-
-  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
-
-  const rowSelection = useMemo(() => {
-    return {
-      getCheckboxProps: (record: ISaleOrderLine) => ({
-        disabled:
-          !!record?.productionOrder ||
-          record?.item?.itemType !== ItemType.PRODUCT,
-      }),
-      selectedRowKeys: selectedRowKeys,
-      onSelect: (record?: ISaleOrderLine, selected?: boolean) => {
-        if (!record) return;
-        if (selected) {
-          setSelectedRowKeys((prev) => [...prev, record.id]);
-        } else {
-          setSelectedRowKeys((prev) => prev.filter((id) => id !== record.id));
-        }
-      },
-      onSelectAll: (selected?: boolean, selectedRows?: ISaleOrderLine[]) => {
-        if (!selectedRows) return;
-        if (selected) {
-          setSelectedRowKeys(selectedRows.map((row) => row.id));
-        } else {
-          setSelectedRowKeys([]);
-        }
-      },
-    };
-  }, [ItemType.PRODUCT, selectedRowKeys]);
   const apiUrl = useApiUrl();
 
-  const { mutate, isLoading: isCreatingProductionOrders } = useCustomMutation();
-  const { mutate: updateStatus, isLoading: isUpdatingStatus } =
-    useCustomMutation<IProductionOrder, HttpError>();
+  const { mutate: update, isLoading: isUpdatingStatus } = useCustomMutation<
+    IProductionOrder,
+    HttpError
+  >();
 
   const invalidate = useInvalidate();
-
-  const createProductionOrders = async () => {
-    mutate(
-      {
-        url: `${apiUrl}/production-orders/${id}/create-production-order`,
-        method: "post",
-        values: {
-          saleOrderLineIds: selectedRowKeys,
-        },
-        successNotification: () => {
-          return {
-            message: ``,
-            description: "Đã tạo thành công đơn sản xuất",
-            type: "success",
-          };
-        },
-        errorNotification: () => {
-          return {
-            message: ``,
-            description: "Lỗi xảy ra trong quá trình tạo đơn sản xuất",
-            type: "error",
-          };
-        },
-      },
-
-      {
-        onSuccess: () => {
-          setSelectedRowKeys([]);
-          invalidate({
-            resource: "production-orders",
-            invalidates: ["detail"],
-            id,
-          });
-        },
-      }
+  const [visible, setVisible] = useState(false);
+  const onClose = () => {
+    setVisible(false);
+  };
+  const statusTag = (status?: string) => {
+    let translatedStatus = "";
+    let color: TagColor = "green";
+    switch (status) {
+      case ProductionOrderStatus.MANUFACTURING:
+        translatedStatus = "Đang sản xuất";
+        color = "blue";
+        break;
+      case ProductionOrderStatus.PAUSED:
+        translatedStatus = "Hoãn";
+        color = "yellow";
+        break;
+      case ProductionOrderStatus.FINISHED:
+        translatedStatus = "Đã hoàn thành";
+        color = "green";
+        break;
+      case ProductionOrderStatus.CANCELLED:
+        translatedStatus = "Đã huỷ";
+        color = "white";
+        break;
+      default:
+        translatedStatus = "Mới";
+    }
+    return (
+      <div>
+        <Tag color={color}>{translatedStatus}</Tag>
+      </div>
     );
   };
 
@@ -124,157 +93,138 @@ export const ProductionOrderShow = () => {
   }
 
   const productionOrder = data?.data;
-  const columns = [
-    {
-      title: "Sản phẩm",
-      dataIndex: "item.itemName",
-    },
-    {
-      title: "Đơn vị",
-      dataIndex: "item.uom.uomName",
-    },
-    {
-      title: "Số lượng đặt hàng",
-      dataIndex: "quantity",
-      render: (value: string) => {
-        return <div>{Number(value).toLocaleString()} </div>;
-      },
-    },
-    {
-      title: "Sl đã hoàn thành",
-      dataIndex: "",
-    },
-    {
-      title: "Đơn giá",
-      dataIndex: "unitPrice",
-      render: (value: string) => {
-        return <div>{Number(value).toLocaleString()} ₫</div>;
-      },
-    },
-    {
-      title: "Thuế",
-      dataIndex: "taxRate",
-      render: (value: string) => {
-        return <div>{(Number(value) * 100).toLocaleString()}%</div>;
-      },
-    },
-    {
-      title: "Thành tiền",
-      dataIndex: "subTotal",
-      render: (value: string) => {
-        return <div>{Number(value).toLocaleString()} ₫</div>;
-      },
-    },
-    {
-      title: "Ngày giao hàng",
-      dataIndex: "toDeliverAt",
-      render: (value: string) => {
-        return <div>{value ? new Date(value).toLocaleDateString() : ""}</div>;
-      },
-    },
-    {
-      title: "Ghi chú sx",
-      dataIndex: "note",
-    },
-    {
-      title: "Trạng thái lệnh sx",
-      dataIndex: "productionOrder",
-      render: (value: IProductionOrder) => {
-        if (!value) return;
-        const { id, status } = value;
-
-        let translatedStatus = "";
-        let color: TagColor = "white";
-        switch (status) {
-          case ProductionOrderStatus.WAITING:
-            translatedStatus = "Chờ sản xuất";
-            color = "grey";
-            break;
-          case ProductionOrderStatus.MANUFACTURING:
-            translatedStatus = "Đang sản xuất";
-            color = "blue";
-            break;
-          case ProductionOrderStatus.PAUSED:
-            translatedStatus = "Hoãn";
-            color = "orange";
-            break;
-          case ProductionOrderStatus.FINISHED:
-            translatedStatus = "Đã huỷ";
-            color = "green";
-            break;
-          case ProductionOrderStatus.CANCELLED:
-            translatedStatus = "Đã huỷ";
-            color = "red";
-            break;
-          default:
-            translatedStatus = "Mới";
-        }
-        return (
-          <div>
-            <Tag color={color}>
-              {id}: {translatedStatus}
-            </Tag>
-          </div>
-        );
-      },
-    },
-  ];
 
   const { Title } = Typography;
-  const statusTag = (status?: string) => {
-    let translatedStatus = "";
-    let color: TagColor = "green";
-    switch (status) {
-      case ProductionOrderStatus.MANUFACTURING:
-        translatedStatus = "Đang sản xuất";
-        color = "blue";
-        break;
-      case ProductionOrderStatus.PAUSED:
-        translatedStatus = "Hoãn";
-        color = "yellow";
-        break;
-      case ProductionOrderStatus.FINISHED:
-        translatedStatus = "Đã hoàn thàh";
-        color = "green";
-        break;
-      case ProductionOrderStatus.CANCELLED:
-        translatedStatus = "Đã huỷ";
-        color = "white";
-        break;
-      default:
-        translatedStatus = "Mới";
-    }
-    return (
-      <div>
-        <Tag color={color}>{translatedStatus}</Tag>
-      </div>
+  const updateFinish = () => {
+    update(
+      {
+        url: `${apiUrl}/production-orders/${productionOrder?.id}/update-status`,
+        method: "post",
+        values: {
+          status: ProductionOrderStatus.FINISHED,
+          finishedQuantity,
+        },
+      },
+      {
+        onSuccess: () => {
+          invalidate({
+            resource: "production-orders",
+            invalidates: ["detail"],
+            id,
+          });
+        },
+      }
     );
+  };
+  const onFinish = () => {
+    if (productionOrder && finishedQuantity < productionOrder?.quantity) {
+      setVisible(true);
+    } else {
+      updateFinish();
+    }
   };
 
   return (
     <div className="px-6">
       <div className="flex items-end justify-between gap-4 py-5 flex-wrap">
-        <Title heading={3}>Đơn bán hàng </Title>
+        <Title heading={3}>Đơn sản xuất </Title>
         <Space>
-          <Button
-            theme="solid"
-            onClick={() => {
-              go({
-                to: "/production-orders/create",
-                type: "push",
-              });
-            }}
-          >
-            Tạo
-          </Button>
+          {productionOrder?.status !== ProductionOrderStatus.FINISHED ? (
+            <Button
+              disabled={
+                productionOrder?.status === ProductionOrderStatus.CANCELLED ||
+                productionOrder?.status === ProductionOrderStatus.MANUFACTURING
+              }
+              theme="solid"
+              onClick={() => {
+                update(
+                  {
+                    url: `${apiUrl}/production-orders/${productionOrder?.id}/update-status`,
+                    method: "post",
+                    values: {
+                      status: ProductionOrderStatus.MANUFACTURING,
+                    },
+                  },
+                  {
+                    onSuccess: () => {
+                      invalidate({
+                        resource: "production-orders",
+                        invalidates: ["detail"],
+                        id,
+                      });
+                    },
+                  }
+                );
+              }}
+            >
+              Sản xuất
+            </Button>
+          ) : null}
 
-          {productionOrder &&
-          productionOrder?.status !== ProductionOrderStatus.CANCELLED ? (
+          {productionOrder?.status !== ProductionOrderStatus.FINISHED ? (
+            <Button
+              disabled={
+                productionOrder?.status === ProductionOrderStatus.PAUSED ||
+                productionOrder?.status === ProductionOrderStatus.CANCELLED
+              }
+              theme="solid"
+              type="tertiary"
+              onClick={() => {
+                update(
+                  {
+                    url: `${apiUrl}/production-orders/${productionOrder?.id}/update-status`,
+                    method: "post",
+                    values: {
+                      status: ProductionOrderStatus.PAUSED,
+                    },
+                  },
+                  {
+                    onSuccess: () => {
+                      invalidate({
+                        resource: "production-orders",
+                        invalidates: ["detail"],
+                        id,
+                      });
+                    },
+                  }
+                );
+              }}
+            >
+              Hoãn
+            </Button>
+          ) : null}
+
+          {productionOrder?.status !== ProductionOrderStatus.FINISHED ? (
+            <Button
+              disabled={finishedQuantity <= 0}
+              theme="solid"
+              onClick={() => onFinish()}
+            >
+              Hoàn thành
+            </Button>
+          ) : null}
+
+          {productionOrder?.status !== ProductionOrderStatus.FINISHED ? (
+            <Modal
+              title="Modal Title"
+              visible={visible}
+              onOk={updateFinish}
+              onCancel={onClose}
+              maskClosable={false}
+            >
+              <p>
+                Số lượng hoàn thành ít hơn số lượng yêu cầu. Xin hãy xác nhận
+                một lần nữa số lượng này chính xác.
+              </p>
+            </Modal>
+          ) : null}
+
+          {productionOrder?.status !== ProductionOrderStatus.FINISHED ? (
             <Popconfirm
               title="Bạn có chắc muốn huỷ đơn hàng này?"
               content="Huỷ đơn hàng sẽ không huỷ đơn sản xuất liên quan"
               onConfirm={() => {
-                updateStatus(
+                update(
                   {
                     url: `${apiUrl}/production-orders/${productionOrder?.id}/update-status`,
                     method: "post",
@@ -294,10 +244,73 @@ export const ProductionOrderShow = () => {
                 );
               }}
             >
-              <Button type="danger" theme="solid" loading={isUpdatingStatus}>
+              <Button
+                type="danger"
+                theme="solid"
+                loading={isUpdatingStatus}
+                disabled={
+                  productionOrder?.status === ProductionOrderStatus.CANCELLED
+                }
+              >
                 Huỷ
               </Button>
             </Popconfirm>
+          ) : null}
+
+          {productionOrder?.status === ProductionOrderStatus.FINISHED ? (
+            <>
+              <Button type="secondary" onClick={() => setLocked(!locked)}>
+                <div className="flex items-center gap-2">
+                  {locked ? (
+                    <IconLock style={{ color: "#6A3AC7" }} />
+                  ) : (
+                    <IconUnlock style={{ color: "#6A3AC7" }} />
+                  )}
+                  <p>Mở khoá</p>
+                </div>
+              </Button>
+              <Button
+                type="secondary"
+                onClick={() => {
+                  update(
+                    {
+                      url: `${apiUrl}/production-orders/${productionOrder?.id}/update-finished-quantity`,
+                      method: "post",
+                      values: {
+                        status: productionOrder?.status,
+                        finishedQuantity,
+                      },
+                      successNotification: () => {
+                        return {
+                          message: ``,
+                          description: "Success with no errors",
+                          type: "success",
+                        };
+                      },
+                      errorNotification: () => {
+                        return {
+                          message: ``,
+                          description: "Error",
+                          type: "error",
+                        };
+                      },
+                    },
+                    {
+                      onSuccess: () => {
+                        setLocked(true);
+                        invalidate({
+                          resource: "production-orders",
+                          invalidates: ["detail"],
+                          id,
+                        });
+                      },
+                    }
+                  );
+                }}
+              >
+                Lưu thay đổi
+              </Button>
+            </>
           ) : null}
         </Space>
       </div>
@@ -319,6 +332,7 @@ export const ProductionOrderShow = () => {
                 {productionOrder?.saleOrder?.customer.partnerName}
               </Typography>
             </div>
+
             <div>
               <Title heading={6}>Trạng thái</Title>
               <Typography>{statusTag(productionOrder?.status)}</Typography>
@@ -342,7 +356,31 @@ export const ProductionOrderShow = () => {
             <div>
               <Title heading={6}>Số lượng đã hoàn thành</Title>
               <Typography>
-                {Number(productionOrder?.finishedUomId).toLocaleString()}
+                {productionOrder?.status !== ProductionOrderStatus.FINISHED ||
+                !locked ? (
+                  <InputNumber
+                    formatter={(value) =>
+                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
+                    parser={(value) => value.replace(/(,*)/g, "")}
+                    defaultValue={productionOrder?.finishedQuantity || 0}
+                    onNumberChange={(value) => {
+                      setFinishedQuantity(value);
+                    }}
+                  />
+                ) : (
+                  Number(productionOrder?.finishedQuantity).toLocaleString()
+                )}
+
+                {}
+              </Typography>
+            </div>
+            <div>
+              <Title heading={6}>Ngày hoàn thành</Title>
+              <Typography>
+                {new Date(
+                  productionOrder?.finishedAt ?? ""
+                ).toLocaleDateString()}
               </Typography>
             </div>
             <div>

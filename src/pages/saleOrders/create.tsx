@@ -33,8 +33,8 @@ export const SaleOrderCreate = () => {
         },
         successNotification: () => {
           return {
-            message: `Tạo đơn hàng thành công`,
-            description: "",
+            message: "",
+            description: "Tạo đơn hàng thành công`",
             type: "success",
           };
         },
@@ -367,26 +367,25 @@ export const SaleOrderCreate = () => {
                     <div className="flex text-sm justify-between mb-1">
                       <span className="font-semibold">Total</span>
                       <span className="font-semibold">
-                        {(
-                          values?.saleOrderLines?.reduce(
-                            (
-                              partialSum: number,
-                              saleLine: {
-                                quantity: number;
-                                unitPrice: number;
-                                taxRate: number;
-                              }
-                            ) => {
-                              return (
-                                partialSum +
-                                saleLine.quantity *
-                                  saleLine.unitPrice *
-                                  (1 + saleLine.taxRate)
-                              );
-                            },
-                            0
-                          ) || 0
-                        ).toLocaleString("en-US")}{" "}
+                        {values?.saleOrderLines?.reduce(
+                          (
+                            partialSum: number,
+                            saleLine: {
+                              quantity: number;
+                              finishedQuantity: number;
+                              unitPrice: number;
+                              taxRate: number;
+                            }
+                          ) => {
+                            return (
+                              partialSum +
+                              saleLine.finishedQuantity *
+                                saleLine.unitPrice *
+                                (1 + saleLine.taxRate)
+                            );
+                          },
+                          0
+                        ) || 0}
                         ₫
                       </span>
                     </div>

@@ -1,4 +1,5 @@
 import { MainLayout } from "@components/layout";
+import { InvetoryLevelList } from "@pages/inventoryLevels";
 import { ItemList } from "@pages/items";
 import {
   ProductionOrderList,
@@ -55,6 +56,10 @@ function App() {
               list: "/items",
             },
             {
+              name: "inventory-levels",
+              list: "/inventory-levels",
+            },
+            {
               name: "sale-orders",
               list: "/sale-orders",
               create: "/sale-orders/create",
@@ -73,6 +78,7 @@ function App() {
             >
               <Route index element={<ItemList />} />
               <Route path="items" element={<ItemList />} />
+              <Route path="inventory-levels" element={<InvetoryLevelList />} />
               <Route path="sale-orders">
                 <Route index element={<SaleOrderList />} />
                 <Route path="create" element={<SaleOrderCreate />} />
