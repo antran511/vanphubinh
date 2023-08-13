@@ -66,7 +66,7 @@ export interface IProductionOrder {
   finishedUomId: number;
   createdAt: string;
   updatedAt: string;
-  finishedAt: string;
+  deadline: string;
   status: ProductionOrderStatus;
   saleOrder: ISaleOrder;
 }

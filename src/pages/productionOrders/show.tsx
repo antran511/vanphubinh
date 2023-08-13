@@ -127,7 +127,10 @@ export const ProductionOrderShow = () => {
   return (
     <div className="px-6">
       <div className="flex items-end justify-between gap-4 py-5 flex-wrap">
-        <Title heading={3}>Đơn sản xuất </Title>
+        <div className="flex items-center gap-x-2">
+          <Title heading={3}>Đơn sản xuất #{productionOrder?.id}</Title>
+          {statusTag(productionOrder?.status)}
+        </div>
         <Space>
           {productionOrder?.status !== ProductionOrderStatus.FINISHED ? (
             <Button
@@ -322,21 +325,12 @@ export const ProductionOrderShow = () => {
         <div>
           <div className="flex flex-col	gap-4">
             <div>
-              <Title heading={6}>Mã đơn hàng</Title>
-              <Typography>{productionOrder?.id}</Typography>
-            </div>
-
-            <div>
               <Title heading={6}>Khách hàng</Title>
               <Typography>
                 {productionOrder?.saleOrder?.customer.partnerName}
               </Typography>
             </div>
 
-            <div>
-              <Title heading={6}>Trạng thái</Title>
-              <Typography>{statusTag(productionOrder?.status)}</Typography>
-            </div>
             <div>
               <Title heading={6}>Sản phẩm</Title>
               <Typography>{productionOrder?.item.itemName}</Typography>
@@ -378,9 +372,9 @@ export const ProductionOrderShow = () => {
             <div>
               <Title heading={6}>Ngày hoàn thành</Title>
               <Typography>
-                {new Date(
-                  productionOrder?.finishedAt ?? ""
-                ).toLocaleDateString()}
+                {productionOrder?.deadline
+                  ? new Date(productionOrder?.deadline).toLocaleDateString()
+                  : ""}
               </Typography>
             </div>
             <div>

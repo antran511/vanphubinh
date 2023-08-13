@@ -19,6 +19,23 @@ export const ItemList = () => {
     {
       title: "Loại sản phẩm",
       dataIndex: "itemType",
+      render: (itemType: string) => {
+        let translatedItemType;
+        switch (itemType) {
+          case "MATERIAL":
+            translatedItemType = "Nguyên liệu/Bán thành phẩm  ";
+            break;
+          case "MOULD":
+            translatedItemType = "Trục";
+            break;
+          case "SERVICE":
+            translatedItemType = "Dịch vụ";
+            break;
+          default:
+            translatedItemType = "Sản phẩm";
+        }
+        return <div>{translatedItemType}</div>;
+      },
     },
   ];
   const { tableQueryResult, current, setCurrent, pageSize } = useTable<

@@ -245,17 +245,16 @@ export const SaleOrderShow = () => {
       default:
         translatedStatus = "Đơn hàng";
     }
-    return (
-      <div>
-        <Tag color={color}>{translatedStatus}</Tag>
-      </div>
-    );
+    return <Tag color={color}>{translatedStatus}</Tag>;
   };
 
   return (
     <div className="px-6">
       <div className="flex items-end justify-between gap-4 py-5 flex-wrap">
-        <Title heading={3}>Đơn bán hàng </Title>
+        <div className="flex items-center gap-x-2">
+          <Title heading={3}>Đơn bán hàng #{saleOrder?.id}</Title>
+          {statusTag(saleOrder?.status)}
+        </div>
         <Space>
           <Button
             icon={<IconPlusStroked />}
@@ -349,36 +348,11 @@ export const SaleOrderShow = () => {
         <div>
           <div className="flex flex-col space-y-4">
             <div>
-              <Title heading={6}>Mã đơn hàng</Title>
-              <Typography>{saleOrder?.id}</Typography>
-            </div>
-            <div>
               <Title heading={6}>Khách hàng</Title>
               <Typography>{saleOrder?.customer?.partnerName}</Typography>
             </div>
-            <div>
-              <Title heading={6}>Trạng thái</Title>
-              {statusTag(saleOrder?.status)}
-            </div>
 
             <div>
-              <Banner
-                fullMode={false}
-                type="info"
-                bordered
-                icon={null}
-                closeIcon={null}
-                title={
-                  <div
-                    style={{
-                      fontWeight: 600,
-                      fontSize: "14px",
-                      lineHeight: "20px",
-                    }}
-                  >{`Theo dõi lệnh sản xuất qua đơn bán hàng`}</div>
-                }
-                description={<div>Điền vào hdsd</div>}
-              />
               <div className="flex items-end justify-between gap-4 py-5 flex-wrap">
                 <Title heading={6}>Dòng đơn hàng</Title>
                 <Button
