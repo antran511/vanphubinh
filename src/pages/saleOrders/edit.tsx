@@ -334,7 +334,7 @@ export const SaleOrderEdit = () => {
                                         (1 +
                                           values.saleOrderLines[i]?.taxRate) ||
                                       0
-                                    ).toLocaleString("en-US")}{" "}
+                                    ).toLocaleString()}{" "}
                                     đ
                                   </Typography>
                                 </td>
@@ -404,8 +404,16 @@ export const SaleOrderEdit = () => {
                                 saleLine: {
                                   quantity: number;
                                   unitPrice: number;
+                                  finishedQuantity: number;
                                 }
                               ) => {
+                                if (saleLine.finishedQuantity > 0) {
+                                  return (
+                                    partialSum +
+                                    saleLine.finishedQuantity *
+                                      saleLine.unitPrice
+                                  );
+                                }
                                 return (
                                   partialSum +
                                   saleLine.quantity * saleLine.unitPrice
@@ -413,7 +421,7 @@ export const SaleOrderEdit = () => {
                               },
                               0
                             ) || 0
-                          ).toLocaleString("en-US")}{" "}
+                          ).toLocaleString()}{" "}
                           ₫
                         </span>
                       </div>
@@ -439,7 +447,7 @@ export const SaleOrderEdit = () => {
                               },
                               0
                             ) || 0
-                          ).toLocaleString("en-US")}{" "}
+                          ).toLocaleString()}{" "}
                           ₫
                         </span>
                       </div>
@@ -467,7 +475,7 @@ export const SaleOrderEdit = () => {
                               },
                               0
                             ) || 0
-                          ).toLocaleString("en-US")}{" "}
+                          ).toLocaleString()}{" "}
                           ₫
                         </span>
                       </div>

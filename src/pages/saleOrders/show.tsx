@@ -388,8 +388,18 @@ export const SaleOrderShow = () => {
                         saleOrder?.saleOrderLines?.reduce(
                           (
                             partialSum: number,
-                            saleLine: { quantity: number; unitPrice: number }
+                            saleLine: {
+                              quantity: number;
+                              unitPrice: number;
+                              finishedQuantity: number;
+                            }
                           ) => {
+                            if (saleLine.finishedQuantity > 0) {
+                              return (
+                                partialSum +
+                                saleLine.finishedQuantity * saleLine.unitPrice
+                              );
+                            }
                             return (
                               partialSum +
                               saleLine.quantity * saleLine.unitPrice
@@ -397,7 +407,7 @@ export const SaleOrderShow = () => {
                           },
                           0
                         ) || 0
-                      ).toLocaleString("en-US")}{" "}
+                      ).toLocaleString()}{" "}
                       ₫
                     </span>
                   </div>
@@ -423,7 +433,7 @@ export const SaleOrderShow = () => {
                           },
                           0
                         ) || 0
-                      ).toLocaleString("en-US")}{" "}
+                      ).toLocaleString()}{" "}
                       ₫
                     </span>
                   </div>
@@ -458,7 +468,7 @@ export const SaleOrderShow = () => {
                           },
                           0
                         ) || 0
-                      ).toLocaleString("en-US")}{" "}
+                      ).toLocaleString()}{" "}
                       ₫
                     </span>
                   </div>

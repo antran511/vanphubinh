@@ -261,7 +261,7 @@ export const SaleOrderCreate = () => {
                                       values?.saleOrderLines[i]?.unitPrice *
                                       (1 + values.saleOrderLines[i]?.taxRate) ||
                                     0
-                                  ).toLocaleString("en-US")}{" "}
+                                  ).toLocaleString()}{" "}
                                   đ
                                 </Typography>
                               </td>
@@ -323,7 +323,10 @@ export const SaleOrderCreate = () => {
                           values?.saleOrderLines?.reduce(
                             (
                               partialSum: number,
-                              saleLine: { quantity: number; unitPrice: number }
+                              saleLine: {
+                                quantity: number;
+                                unitPrice: number;
+                              }
                             ) => {
                               return (
                                 partialSum +
@@ -332,7 +335,7 @@ export const SaleOrderCreate = () => {
                             },
                             0
                           ) || 0
-                        ).toLocaleString("en-US")}{" "}
+                        ).toLocaleString()}{" "}
                         ₫
                       </span>
                     </div>
@@ -358,7 +361,7 @@ export const SaleOrderCreate = () => {
                             },
                             0
                           ) || 0
-                        ).toLocaleString("en-US")}{" "}
+                        ).toLocaleString()}{" "}
                         ₫
                       </span>
                     </div>
