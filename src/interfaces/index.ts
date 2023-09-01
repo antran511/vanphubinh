@@ -2,7 +2,7 @@ export interface IUom {
   id: number;
   uomName: string;
 }
-enum ProductionOrderStatus {
+export enum ProductionOrderStatus {
   NEW = "NEW",
   WAITING = "WAITING",
   MANUFACTURING = "MANUFACTURING",
@@ -11,7 +11,7 @@ enum ProductionOrderStatus {
   CANCELLED = "CANCELLED",
 }
 
-enum SaleOrderStatus {
+export enum SaleOrderStatus {
   QUOTE = "QUOTE",
   SALE_ORDER = "SALE_ORDER",
   CANCELLED = "CANCELLED",
@@ -30,10 +30,11 @@ export interface IItem {
   description: string;
 }
 
-enum ItemType {
+export enum ItemType {
   PRODUCT = "PRODUCT",
   MOULD = "MOULD",
   MATERIAL = "MATERIAL",
+  FILM = "FILM",
   SERVICE = "SERVICE",
 }
 
@@ -64,8 +65,9 @@ export interface IProductionOrder {
   quantity: number;
   finishedQuantity: number;
   finishedUomId: number;
-  createdAt: string;
-  updatedAt: string;
+  finishedAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
   deadline: string;
   status: ProductionOrderStatus;
   saleOrder: ISaleOrder;

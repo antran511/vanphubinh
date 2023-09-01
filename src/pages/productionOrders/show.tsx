@@ -371,19 +371,11 @@ export const ProductionOrderShow = () => {
             </div>
             <div>
               <Title heading={6}>Ngày hoàn thành</Title>
-              <Typography>
-                {productionOrder?.deadline
-                  ? new Date(productionOrder?.deadline).toLocaleDateString()
-                  : ""}
-              </Typography>
+              <Typography>{productionOrder?.finishedAt}</Typography>
             </div>
             <div>
               <Title heading={6}>Ngày tạo</Title>
-              <Typography>
-                {new Date(
-                  productionOrder?.createdAt ?? ""
-                ).toLocaleDateString()}
-              </Typography>
+              <Typography>{productionOrder?.createdAt}</Typography>
             </div>
           </div>
         </div>

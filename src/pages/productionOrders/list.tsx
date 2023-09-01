@@ -63,7 +63,7 @@ export const ProductionOrderList = () => {
       dataIndex: "createdAt",
     },
     {
-      title: "Hạn giao hàng",
+      title: "Hạn chót",
       dataIndex: "deadline",
       render: (value: string) => {
         return <div>{value ? new Date(value).toLocaleDateString() : ""} </div>;
@@ -71,7 +71,7 @@ export const ProductionOrderList = () => {
     },
     {
       title: "Ghi chú",
-      dataIndex: "saleOrderLine.note",
+      dataIndex: "note",
     },
     {
       title: "Trạng thái",

@@ -1,9 +1,24 @@
-import { Button, Table, Typography } from "@douyinfe/semi-ui";
+import { ItemCreate } from "@components/items";
+import { IconBox } from "@douyinfe/semi-icons";
+import { Button, Table, Typography, Modal } from "@douyinfe/semi-ui";
 import { HttpError, useGo, useTable } from "@refinedev/core";
 import { IItem } from "@src/interfaces";
 import { useMemo } from "react";
+import { useMediaQuery } from "react-responsive";
 
 export const ItemList = () => {
+  const isDesktopOrLaptop = useMediaQuery({
+    query: "(min-width: 1224px)",
+  });
+  const config = {
+    title: "Tạo hàng hoá",
+    icon: <IconBox />,
+    width: isDesktopOrLaptop ? "60vw" : "90vw",
+    content: <ItemCreate />,
+  };
+
+  const [modal, contextHolder] = Modal.useModal();
+
   const go = useGo();
   const { Title } = Typography;
   const columns = [
@@ -27,6 +42,9 @@ export const ItemList = () => {
             break;
           case "MOULD":
             translatedItemType = "Trục";
+            break;
+          case "FILM":
+            translatedItemType = "Màng";
             break;
           case "SERVICE":
             translatedItemType = "Dịch vụ";
@@ -64,15 +82,11 @@ export const ItemList = () => {
       <div className="flex items-end justify-between gap-4 py-5 flex-wrap">
         <Title heading={3}>Hàng hoá</Title>
         <Button
-          theme="solid"
           onClick={() => {
-            go({
-              to: "/items/create",
-              type: "push",
-            });
+            modal.info(config);
           }}
         >
-          +
+          Tạo hàng hoá
         </Button>
       </div>
       <div className="">
@@ -84,6 +98,7 @@ export const ItemList = () => {
           size="middle"
         />
       </div>
+      <>{contextHolder}</>
     </div>
   );
 };
